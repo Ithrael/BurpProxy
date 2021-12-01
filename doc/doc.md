@@ -33,6 +33,9 @@
 使用插件后的重放时序图
 ![解密时序图](img/4.png)
 
+### 开发
+IDEA CE + JFormDesigner + jdk1.8
+
 ## 参考
 [从头开发一个BurpSuite数据收集插件](https://www.secpulse.com/archives/124593.html)
 
