@@ -14,6 +14,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     implementation 'net.portswigger.burp.extender:burp-extender-api:1.7.13'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
 }
 
 test {

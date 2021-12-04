@@ -36,9 +36,12 @@
 ### 开发
 IDEA CE + JFormDesigner + jdk1.8
 
+
 ## 参考
 [从头开发一个BurpSuite数据收集插件](https://www.secpulse.com/archives/124593.html)
 
 [HaE - Highlighter and Extractor](https://github.com/gh0stkey/HaE)
 
-BurpSuite API
+[BurpSuite API](https://portswigger.net/burp/extender/api/index.html)
+
+[BurpSuite Demo](https://portswigger.net/burp/extender/)
