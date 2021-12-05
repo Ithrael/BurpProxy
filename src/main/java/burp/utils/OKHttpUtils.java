@@ -32,7 +32,7 @@ public class OKHttpUtils {
         }
     }
 
-    String post(String url, String key, String value) throws IOException {
+    public static String post(String url, String key, String value) throws IOException {
         RequestBody formBody = new FormBody.Builder()
                 .add(key, value)
                 .build();
@@ -42,19 +42,18 @@ public class OKHttpUtils {
         Response response = OKHttpUtils.getInstance().newCall(request).execute();
         return response.body().string();
     }
-
-    public static void main(String[] args) {
-        OKHttpUtils httpUtils = new OKHttpUtils();
-        String url = "http://127.0.0.1:5000/decrypt";
-        String key = "key";
-        String value = "value";
-        try {
-            String resBody = httpUtils.post(url, key, value);
-            System.out.println(resBody);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] args) {
+//        OKHttpUtils httpUtils = new OKHttpUtils();
+//        String url = "http://127.0.0.1:5000/decrypt";
+//        String key = "key";
+//        String value = "value";
+//        try {
+//            String resBody = httpUtils.post(url, key, value);
+//            System.out.println(resBody);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
 
 
