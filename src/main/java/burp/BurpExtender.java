@@ -76,14 +76,12 @@ public class BurpExtender implements IBurpExtender, IHttpListener {
             String msg = jsonObject.getString("msg");
             try {
                 String decryptBody = OKHttpUtils.post("http://127.0.0.1:5000/decrypt", "msg", msg);
-                jsonObject.put("msg", decryptBody);
                 stdout.println("msg: " + decryptBody);
                 messageInfo.setResponse(jsonObject.getBytes("msg"));
+                messageInfo.setComment(decryptBody);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
             stdout.println(responseBody);
         }
     }
