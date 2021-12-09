@@ -65,6 +65,9 @@ public class BurpExtender implements IBurpExtender, IHttpListener {
 
         } else {
             burpHelper.ParseResponse(messageInfo.getResponse());
+            if (!burpHelper.url.toString().contains(host)) {
+                return;
+            }
             stdout.println("response url: " + burpHelper.url);
             if (!burpHelper.url.toString().contains(host)) {
                 return;
@@ -76,13 +79,12 @@ public class BurpExtender implements IBurpExtender, IHttpListener {
             String msg = jsonObject.getString("msg");
             try {
                 String decryptBody = OKHttpUtils.post("http://127.0.0.1:5000/decrypt", "msg", msg);
+                jsonObject.put("msg", decryptBody);
+                stdout.println("decrypt: ");
                 stdout.println("msg: " + decryptBody);
-                messageInfo.setResponse(jsonObject.getBytes("msg"));
-                messageInfo.setComment(decryptBody);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            stdout.println(responseBody);
         }
     }
 }
