@@ -2,21 +2,20 @@ package burp;
 
 import burp.utils.OKHttpUtils;
 import com.alibaba.fastjson.JSONObject;
-import jdk.nashorn.internal.parser.JSONParser;
 
-import javax.imageio.IIOException;
+import java.awt.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
-public class BurpExtender implements IBurpExtender, IHttpListener {
+public class BurpExtender implements IBurpExtender, IMessageEditorTabFactory {
     private IBurpExtenderCallbacks callbacks;
+    private IExtensionHelpers helpers;
     private PrintWriter stdout;
     BurpHelper burpHelper;
     private String host = "47.112.115.242:8089/sys/login";
     private String decryptUrl = "http://127.0.0.1:5000/decrypt";
+    private final String BURP_PROXY_TAB_NAME = "burp decrypt proxy";
 
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
@@ -27,64 +26,123 @@ public class BurpExtender implements IBurpExtender, IHttpListener {
         stdout = new PrintWriter(callbacks.getStdout(), true);
 
         // register ourselves as an HTTP listener
-        callbacks.registerHttpListener(this);
         burpHelper = new BurpHelper(callbacks.getHelpers());
+        helpers = burpHelper.helpers;
     }
 
+    //
+    // implement IMessageEditorTabFactory
+    //
+
     @Override
-    public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
-        if (messageIsRequest) {
-            burpHelper.ParseRequest(messageInfo);
-//            if (!burpHelper.url.toString().contains(host)) {
-//                return;
-//            }
-//            List<String> reqHeaders = burpHelper.headers;
-//            stdout.println("request url: " + burpHelper.url);
-//            stdout.println("request header: ");
-//            for (String header : reqHeaders) {
-//                stdout.println(header);
-//            }
-//
-//            String contentType = burpHelper.getHeaderValue("Content-Type");
-//            stdout.println("Content-Type: " + contentType);
-//
-//            String key = "password";
-//            String value = burpHelper.getParamValue(key);
-//
-//            messageInfo.setHighlight("blue");
-//            messageInfo.setComment(value);
+    public IMessageEditorTab createNewInstance(IMessageEditorController controller, boolean editable)
+    {
+        // create a new instance of our custom editor tab
+        return new BurpDecrptProxyTab(controller, editable);
+    }
 
-//            messageInfo.setRequest("fsdfsfdsfds".getBytes(StandardCharsets.UTF_8));
-//            try {
-//                String res = OKHttpUtils.post(decryptUrl, key, value);
-//                messageInfo.setRequest("fsdfsfdsfds".getBytes(StandardCharsets.UTF_8));
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+    //
+    // class implementing IMessageEditorTab
+    //
 
-        } else {
-            burpHelper.ParseResponse(messageInfo.getResponse());
-            if (!burpHelper.url.toString().contains(host)) {
-                return;
-            }
-            stdout.println("response url: " + burpHelper.url);
-            if (!burpHelper.url.toString().contains(host)) {
-                return;
-            }
-            stdout.println("response url: " + burpHelper.url);
-            String responseBody = new String(burpHelper.responseBody, StandardCharsets.UTF_8);
+    class BurpDecrptProxyTab implements IMessageEditorTab
+    {
+        private boolean editable;
+        private ITextEditor txtInput;
+        private byte[] currentMessage;
 
-            JSONObject jsonObject = JSONObject.parseObject(responseBody);
-            String msg = jsonObject.getString("msg");
-            try {
-                String decryptBody = OKHttpUtils.post("http://127.0.0.1:5000/decrypt", "msg", msg);
-                jsonObject.put("msg", decryptBody);
-                stdout.println("decrypt: ");
-                stdout.println("msg: " + decryptBody);
-            } catch (IOException e) {
-                e.printStackTrace();
+        public BurpDecrptProxyTab(IMessageEditorController controller, boolean editable)
+        {
+            this.editable = editable;
+
+            // create an instance of Burp's text editor, to display our deserialized data
+            txtInput = callbacks.createTextEditor();
+            txtInput.setEditable(editable);
+        }
+
+        //
+        // implement IMessageEditorTab
+        //
+
+        @Override
+        public String getTabCaption()
+        {
+            return BURP_PROXY_TAB_NAME;
+        }
+
+        @Override
+        public Component getUiComponent()
+        {
+            return txtInput.getComponent();
+        }
+
+        @Override
+        public boolean isEnabled(byte[] content, boolean isRequest)
+        {
+            // enable this tab for requests containing a data parameter
+            stdout.println(helpers.analyzeRequest(content).getUrl().toString().contains(host));
+            return isRequest && helpers.analyzeRequest(content).getUrl().toString().contains(host);
+        }
+
+        @Override
+        public void setMessage(byte[] content, boolean isRequest)
+        {
+            if (content == null)
+            {
+                // clear our display
+                txtInput.setText(null);
+                txtInput.setEditable(false);
             }
+            else
+            {
+                // retrieve the data parameter
+                IParameter parameter = helpers.getRequestParameter(content, "username");
+                stdout.println(parameter.getValue());
+                String value = parameter.getValue();
+                String decryptBody = "test decryptBody";
+                try {
+                    decryptBody = OKHttpUtils.post(decryptUrl, "msg", value);
+                    stdout.println("decrypt: ");
+                    stdout.println("msg: " + decryptBody);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                // deserialize the parameter value
+                txtInput.setText(decryptBody.getBytes(StandardCharsets.UTF_8));
+                txtInput.setEditable(editable);
+            }
+
+            // remember the displayed content
+            currentMessage = content;
+        }
+
+        @Override
+        public byte[] getMessage()
+        {
+            // determine whether the user modified the deserialized data
+            if (txtInput.isTextModified())
+            {
+                // reserialize the data
+                byte[] text = txtInput.getText();
+                String input = text.toString();
+
+                // update the request with the new parameter value
+                return helpers.updateParameter(currentMessage, helpers.buildParameter("msg", input, IParameter.PARAM_BODY));
+            }
+            else return currentMessage;
+        }
+
+        @Override
+        public boolean isModified()
+        {
+            return txtInput.isTextModified();
+        }
+
+        @Override
+        public byte[] getSelectedData()
+        {
+            return txtInput.getSelectedText();
         }
     }
 }
