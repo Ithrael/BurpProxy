@@ -1,7 +1,12 @@
 package burp;
 
+import burp.utils.OKHttpUtils;
+
 import java.awt.Component;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class BurpExtender implements IBurpExtender, IMessageEditorTabFactory {
     private IBurpExtenderCallbacks callbacks;
@@ -9,6 +14,7 @@ public class BurpExtender implements IBurpExtender, IMessageEditorTabFactory {
     private PrintWriter stdout;
     private String host = "47.112.115.242:8089/sys/login";
     private String decryptUrl = "http://127.0.0.1:5000/decrypt";
+    private String requestKey = "username";
     private final String BURP_PROXY_TAB_NAME = "burp decrypt proxy";
 
     //
@@ -76,7 +82,6 @@ public class BurpExtender implements IBurpExtender, IMessageEditorTabFactory {
         public boolean isEnabled(byte[] content, boolean isRequest) {
             // enable this tab for requests containing a data parameter
 //            String requestUrl = helpers.analyzeRequest(content).getUrl().toString();
-            stdout.println(helpers.analyzeRequest(content).getHeaders());
             return true;
         }
 
@@ -87,11 +92,24 @@ public class BurpExtender implements IBurpExtender, IMessageEditorTabFactory {
                 txtInput.setText(null);
                 txtInput.setEditable(false);
             } else {
+                stdout.println(helpers.analyzeRequest(content).getHeaders());
+                List<IParameter> parameters =  helpers.analyzeRequest(content).getParameters();
+                stdout.println(parameters.size());
+                for (IParameter parameter:parameters) {
+                    stdout.println(parameter.getValue()+":"+parameter.getName());
+                }
                 // retrieve the data parameter
-                IParameter parameter = helpers.getRequestParameter(content, "data");
-
+                IParameter parameter = helpers.getRequestParameter(content, requestKey);
+                stdout.println(parameter.getName()+"---"+parameter.getValue());
                 // deserialize the parameter value
-                txtInput.setText(helpers.base64Decode(helpers.urlDecode(parameter.getValue())));
+                String decryptResp = "";
+                try {
+                    decryptResp = OKHttpUtils.post(decryptUrl, requestKey, parameter.getValue());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                txtInput.setText(decryptResp.getBytes(StandardCharsets.UTF_8));
                 txtInput.setEditable(editable);
             }
 
