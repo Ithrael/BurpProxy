@@ -8,11 +8,11 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class BurpExtender implements IBurpExtender, IMessageEditorTabFactory {
+public class BurpExtender implements IBurpExtender,IHttpListener, IMessageEditorTabFactory {
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
     private PrintWriter stdout;
-    private String host = "47.112.115.242:8089/sys/login";
+    private String host = "47.112.115.242";
     private String decryptUrl = "http://127.0.0.1:5000/decrypt";
     private String requestKey = "username";
     private final String BURP_PROXY_TAB_NAME = "burp decrypt proxy";
@@ -33,7 +33,7 @@ public class BurpExtender implements IBurpExtender, IMessageEditorTabFactory {
         // set our extension name
         callbacks.setExtensionName(BURP_PROXY_TAB_NAME);
 
-        // register ourselves as a message editor tab factory
+        callbacks.registerHttpListener(this);
         callbacks.registerMessageEditorTabFactory(this);
     }
 
@@ -45,6 +45,17 @@ public class BurpExtender implements IBurpExtender, IMessageEditorTabFactory {
     public IMessageEditorTab createNewInstance(IMessageEditorController controller, boolean editable) {
         // create a new instance of our custom editor tab
         return new BurpDecrptProxyTab(controller, editable);
+    }
+
+    @Override
+    public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
+        if (messageIsRequest){
+            String requestHost = messageInfo.getHttpService().getHost();
+            stdout.println(requestHost);
+            if (host.equals(requestHost)){
+                messageInfo.setHighlight("red");
+            }
+        }
     }
 
     //
@@ -92,9 +103,7 @@ public class BurpExtender implements IBurpExtender, IMessageEditorTabFactory {
                 txtInput.setText(null);
                 txtInput.setEditable(false);
             } else {
-                stdout.println(helpers.analyzeRequest(content).getHeaders());
                 List<IParameter> parameters =  helpers.analyzeRequest(content).getParameters();
-                stdout.println(parameters.size());
                 for (IParameter parameter:parameters) {
                     stdout.println(parameter.getValue()+":"+parameter.getName());
                 }
