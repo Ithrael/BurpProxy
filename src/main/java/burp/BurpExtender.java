@@ -105,7 +105,6 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
         @Override
         public void setMessage(byte[] content, boolean isRequest) {
             if (content == null) {
-                // clear our display
                 txtInput.setText(null);
                 txtInput.setEditable(false);
             } else {
@@ -131,6 +130,8 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
                     stdout.println("response:");
                     String respBodyStr = new String(burpHelper.responseBody, StandardCharsets.UTF_8);
                     stdout.println(respBodyStr);
+                    // 这种情况只能解析JSON
+                    // TODO json/text/
                     JSONObject jsonObject = JSONObject.parseObject(respBodyStr);
                     String value = jsonObject.getString(decryptRespKey);
                     try {
