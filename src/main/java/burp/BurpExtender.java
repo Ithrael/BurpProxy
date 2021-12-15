@@ -1,6 +1,7 @@
 package burp;
 
 import burp.utils.OKHttpUtils;
+import com.alibaba.fastjson.JSONObject;
 
 import java.awt.Component;
 import java.io.IOException;
@@ -8,13 +9,16 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class BurpExtender implements IBurpExtender,IHttpListener, IMessageEditorTabFactory {
+public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEditorTabFactory {
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
     private PrintWriter stdout;
-    private String host = "47.112.115.242";
-    private String decryptUrl = "http://127.0.0.1:5000/decrypt";
-    private String requestKey = "username";
+    private BurpHelper burpHelper;
+    private String matchUrl = "47.112.115.242:8089/sys/login";
+    private String decryptReqUrl = "http://127.0.0.1:5000/decryptRep";
+    private String decryptRespUrl = "http://127.0.0.1:5000/decryptResp";
+    private String decryptReqKey = "username";
+    private String decryptRespKey = "msg";
     private final String BURP_PROXY_TAB_NAME = "burp decrypt proxy";
 
     //
@@ -28,6 +32,7 @@ public class BurpExtender implements IBurpExtender,IHttpListener, IMessageEditor
 
         // obtain an extension helpers object
         helpers = callbacks.getHelpers();
+        burpHelper = new BurpHelper(helpers);
         stdout = new PrintWriter(callbacks.getStdout(), true);
 
         // set our extension name
@@ -49,10 +54,11 @@ public class BurpExtender implements IBurpExtender,IHttpListener, IMessageEditor
 
     @Override
     public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
-        if (messageIsRequest){
-            String requestHost = messageInfo.getHttpService().getHost();
-            stdout.println(requestHost);
-            if (host.equals(requestHost)){
+        if (messageIsRequest) {
+            burpHelper.ParseRequest(messageInfo);
+            String requestUrl = burpHelper.url.toString();
+            stdout.println(requestUrl);
+            if (requestUrl.contains(matchUrl)) {
                 messageInfo.setHighlight("red");
             }
         }
@@ -103,21 +109,36 @@ public class BurpExtender implements IBurpExtender,IHttpListener, IMessageEditor
                 txtInput.setText(null);
                 txtInput.setEditable(false);
             } else {
-                List<IParameter> parameters =  helpers.analyzeRequest(content).getParameters();
-                for (IParameter parameter:parameters) {
-                    stdout.println(parameter.getValue()+":"+parameter.getName());
-                }
-                // retrieve the data parameter
-                IParameter parameter = helpers.getRequestParameter(content, requestKey);
-                stdout.println(parameter.getName()+"---"+parameter.getValue());
-                // deserialize the parameter value
                 String decryptResp = "";
-                try {
-                    decryptResp = OKHttpUtils.post(decryptUrl, requestKey, parameter.getValue());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (isRequest) {
+                    // 处理请求
+                    List<IParameter> parameters = helpers.analyzeRequest(content).getParameters();
+                    for (IParameter parameter : parameters) {
+                        stdout.println(parameter.getValue() + ":" + parameter.getName());
+                    }
+                    // retrieve the data parameter
+                    IParameter parameter = helpers.getRequestParameter(content, decryptReqKey);
+                    stdout.println(parameter.getName() + "---" + parameter.getValue());
+                    // deserialize the parameter value
+                    try {
+                        decryptResp = OKHttpUtils.post(decryptReqUrl, decryptReqKey, parameter.getValue());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    // 处理响应
+                    burpHelper.ParseResponse(content);
+                    stdout.println("response:");
+                    String respBodyStr = new String(burpHelper.responseBody, StandardCharsets.UTF_8);
+                    stdout.println(respBodyStr);
+                    JSONObject jsonObject = JSONObject.parseObject(respBodyStr);
+                    String value = jsonObject.getString(decryptRespKey);
+                    try {
+                        decryptResp = OKHttpUtils.post(decryptRespUrl, decryptRespKey, value);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-
                 txtInput.setText(decryptResp.getBytes(StandardCharsets.UTF_8));
                 txtInput.setEditable(editable);
             }
