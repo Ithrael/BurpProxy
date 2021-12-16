@@ -8,13 +8,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEditorTabFactory {
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
     private PrintWriter stdout;
     private BurpHelper burpHelper;
-    private String matchUrl = "47.112.115.242:8089/sys/login";
+    private Pattern patternUrl = Pattern.compile("47.112.115.242:8089.*?");
     private String decryptReqUrl = "http://127.0.0.1:5000/decryptRep";
     private String decryptRespUrl = "http://127.0.0.1:5000/decryptResp";
     private String decryptReqKey = "username";
@@ -58,7 +59,7 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
             burpHelper.ParseRequest(messageInfo);
             String requestUrl = burpHelper.url.toString();
             stdout.println(requestUrl);
-            if (requestUrl.contains(matchUrl)) {
+            if (patternUrl.matcher(requestUrl).find()){
                 messageInfo.setHighlight("red");
             }
         }
