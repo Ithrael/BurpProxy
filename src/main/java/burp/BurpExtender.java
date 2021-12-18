@@ -15,7 +15,9 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
     private IExtensionHelpers helpers;
     private PrintWriter stdout;
     private BurpHelper burpHelper;
-    private Pattern patternUrl = Pattern.compile("47.112.115.242:8089.*?");
+    private BurpProxyGUI gui = new BurpProxyGUI();
+//    private Pattern patternUrl = Pattern.compile("47.112.115.242:8089.*?");
+    private Pattern patternUrl = Pattern.compile(gui.getTextField1().getText().intern());
     private String decryptReqUrl = "http://127.0.0.1:5000/decryptRep";
     private String decryptRespUrl = "http://127.0.0.1:5000/decryptResp";
     private String decryptReqKey = "username";
