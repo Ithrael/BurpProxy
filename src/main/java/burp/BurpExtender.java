@@ -3,6 +3,7 @@ package burp;
 import burp.utils.OKHttpUtils;
 import com.alibaba.fastjson.JSONObject;
 
+import javax.swing.*;
 import java.awt.Component;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,12 +11,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEditorTabFactory {
+public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEditorTabFactory, ITab {
+    private final BurpProxyGUI gui = new BurpProxyGUI();
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
     private PrintWriter stdout;
     private BurpHelper burpHelper;
-    private BurpProxyGUI gui = new BurpProxyGUI();
 //    private Pattern patternUrl = Pattern.compile("47.112.115.242:8089.*?");
     private Pattern patternUrl = Pattern.compile(gui.getTextField1().getText().intern());
     private String decryptReqUrl = "http://127.0.0.1:5000/decryptRep";
@@ -43,6 +44,14 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
 
         callbacks.registerHttpListener(this);
         callbacks.registerMessageEditorTabFactory(this);
+
+        // UI
+        SwingUtilities.invokeLater(this::initialize);
+    }
+
+    private void initialize(){
+        callbacks.customizeUiComponent(gui);
+        callbacks.addSuiteTab(BurpExtender.this);
     }
 
     //
@@ -65,6 +74,16 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
                 messageInfo.setHighlight("red");
             }
         }
+    }
+
+    @Override
+    public String getTabCaption() {
+        return BURP_PROXY_TAB_NAME;
+    }
+
+    @Override
+    public Component getUiComponent() {
+        return gui;
     }
 
     //

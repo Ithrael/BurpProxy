@@ -178,4 +178,8 @@ public class BurpProxyGUI extends JFrame {
     public JTextField getTextField5() {
         return textField5;
     }
+
+    public JButton getOkButton() {
+        return okButton;
+    }
 }
