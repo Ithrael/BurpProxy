@@ -17,12 +17,11 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
     private IExtensionHelpers helpers;
     private PrintWriter stdout;
     private BurpHelper burpHelper;
-//    private Pattern patternUrl = Pattern.compile("47.112.115.242:8089.*?");
     private Pattern patternUrl = Pattern.compile(gui.getTextField1().getText().intern());
-    private String decryptReqUrl = "http://127.0.0.1:5000/decryptRep";
-    private String decryptRespUrl = "http://127.0.0.1:5000/decryptResp";
-    private String decryptReqKey = "username";
-    private String decryptRespKey = "msg";
+    private String decryptReqUrl = gui.getTextField2().getText().intern();
+    private String decryptReqKey = gui.getTextField3().getText().intern();
+    private String decryptRespUrl = gui.getTextField4().getText().intern();
+    private String decryptRespKey = gui.getTextField5().getText().intern();
     private final String BURP_PROXY_TAB_NAME = "burp decrypt proxy";
 
     //
