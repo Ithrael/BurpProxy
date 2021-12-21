@@ -38,14 +38,18 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
         burpHelper = new BurpHelper(helpers);
         stdout = new PrintWriter(callbacks.getStdout(), true);
 
+        stdout.println("@Core Author: Ithrael");
+        stdout.println("@UI Author: Ithrael");
+        stdout.println("@Github: https://github.com/Ithrael/BurpProxy");
+
         // set our extension name
         callbacks.setExtensionName(BURP_PROXY_TAB_NAME);
 
-        callbacks.registerHttpListener(this);
-        callbacks.registerMessageEditorTabFactory(this);
-
         // UI
         SwingUtilities.invokeLater(this::initialize);
+
+        callbacks.registerHttpListener(this);
+        callbacks.registerMessageEditorTabFactory(this);
     }
 
     private void initialize(){
@@ -70,14 +74,14 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
             String requestUrl = burpHelper.url.toString();
             stdout.println(requestUrl);
             if (patternUrl.matcher(requestUrl).find()){
-                messageInfo.setHighlight("red");
+                messageInfo.setHighlight(Color.RED.getValue());
             }
         }
     }
 
     @Override
     public String getTabCaption() {
-        return BURP_PROXY_TAB_NAME;
+        return "BurpDecryptProxy";
     }
 
     @Override
