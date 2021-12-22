@@ -1,5 +1,7 @@
 package burp;
 
+import burp.ui.BackGround;
+import burp.ui.RuleDialog;
 import burp.utils.OKHttpUtils;
 import com.alibaba.fastjson.JSONObject;
 
@@ -12,17 +14,18 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEditorTabFactory, ITab {
-    private final BurpProxyGUI gui = new BurpProxyGUI();
+    private final BackGround back = new BackGround(null, null);
+    private final RuleDialog rule = new RuleDialog();
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
-    private PrintWriter stdout;
     private BurpHelper burpHelper;
-    private Pattern patternUrl = Pattern.compile(gui.getTextField1().getText().intern());
-    private String decryptReqUrl = gui.getTextField2().getText().intern();
-    private String decryptReqKey = gui.getTextField3().getText().intern();
-    private String decryptRespUrl = gui.getTextField4().getText().intern();
-    private String decryptRespKey = gui.getTextField5().getText().intern();
-    private final String BURP_PROXY_TAB_NAME = "burp decrypt proxy";
+    private PrintWriter stdout;
+    private Pattern patternUrl = Pattern.compile(rule.getMatchUrlTextField().getText().intern());
+    private String decryptReqUrl = rule.getDecryptRequestUrlTextField().getText().intern();
+    private String decryptReqKey = rule.getRequestKeyTextField().getText().intern();
+    private String decryptRespUrl = rule.getDecryptResponseUrlTextField().getText().intern();
+    private String decryptRespKey = rule.getResponseKeyTextField().getText().intern();
+    private final String BURP_PROXY_TAB_NAME = "DecryptProxy";
 
     //
     // implement IBurpExtender
@@ -30,12 +33,11 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
 
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
-        // keep a reference to our callbacks object
         this.callbacks = callbacks;
-
         // obtain an extension helpers object
         helpers = callbacks.getHelpers();
         burpHelper = new BurpHelper(helpers);
+
         stdout = new PrintWriter(callbacks.getStdout(), true);
 
         stdout.println("@Core Author: Ithrael");
@@ -53,19 +55,20 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
     }
 
     private void initialize(){
-        callbacks.customizeUiComponent(gui);
+        callbacks.customizeUiComponent(back);
         callbacks.addSuiteTab(BurpExtender.this);
     }
 
-    //
-    // implement IMessageEditorTabFactory
-    //
+    @Override
+    public String getTabCaption() {
+        return BURP_PROXY_TAB_NAME;
+    }
 
     @Override
-    public IMessageEditorTab createNewInstance(IMessageEditorController controller, boolean editable) {
-        // create a new instance of our custom editor tab
-        return new BurpDecrptProxyTab(controller, editable);
+    public Component getUiComponent() {
+        return back;
     }
+
 
     @Override
     public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
@@ -79,15 +82,6 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
         }
     }
 
-    @Override
-    public String getTabCaption() {
-        return "BurpDecryptProxy";
-    }
-
-    @Override
-    public Component getUiComponent() {
-        return gui;
-    }
 
     //
     // class implementing IMessageEditorTab
@@ -112,7 +106,7 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
 
         @Override
         public String getTabCaption() {
-            return BURP_PROXY_TAB_NAME;
+            return "decrypt proxy";
         }
 
         @Override
@@ -195,5 +189,15 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
         public byte[] getSelectedData() {
             return txtInput.getSelectedText();
         }
+    }
+
+    //
+    // implement IMessageEditorTabFactory
+    //
+
+    @Override
+    public IMessageEditorTab createNewInstance(IMessageEditorController controller, boolean editable) {
+        // create a new instance of our custom editor tab
+        return new BurpDecrptProxyTab(controller, editable);
     }
 }
