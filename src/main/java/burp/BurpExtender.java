@@ -10,7 +10,6 @@ import java.awt.Component;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.regex.Pattern;
 
 public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEditorTabFactory, ITab {
@@ -20,11 +19,9 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
     private IExtensionHelpers helpers;
     private BurpHelper burpHelper;
     private PrintWriter stdout;
-    private Pattern patternUrl = Pattern.compile(rule.getMatchUrlTextField().getText().intern());
-    private String decryptReqUrl = rule.getDecryptRequestUrlTextField().getText().intern();
-    private String decryptReqKey = rule.getRequestKeyTextField().getText().intern();
-    private String decryptRespUrl = rule.getDecryptResponseUrlTextField().getText().intern();
-    private String decryptRespKey = rule.getResponseKeyTextField().getText().intern();
+    private Pattern patternUrl = Pattern.compile("47.112.115.242:8089.*?");
+    private String decryptReqUrl = "http://127.0.0.1:5000/decryptReq";
+    private String decryptRespUrl = "http://127.0.0.1:5000/decryptResp";
     private final String BURP_PROXY_TAB_NAME = "DecryptProxy";
 
     //
@@ -54,7 +51,7 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
         callbacks.registerMessageEditorTabFactory(this);
     }
 
-    private void initialize(){
+    private void initialize() {
         callbacks.customizeUiComponent(back);
         callbacks.addSuiteTab(BurpExtender.this);
     }
@@ -69,14 +66,17 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
         return back;
     }
 
+    public boolean isMatch(String url) {
+        return patternUrl.matcher(url).find();
+    }
+
 
     @Override
     public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
         if (messageIsRequest) {
             burpHelper.ParseRequest(messageInfo);
             String requestUrl = burpHelper.url.toString();
-            stdout.println(requestUrl);
-            if (patternUrl.matcher(requestUrl).find()){
+            if (isMatch(requestUrl)) {
                 messageInfo.setHighlight(Color.RED.getValue());
             }
         }
@@ -118,6 +118,8 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
         public boolean isEnabled(byte[] content, boolean isRequest) {
             // enable this tab for requests containing a data parameter
 //            String requestUrl = helpers.analyzeRequest(content).getUrl().toString();
+//            stdout.println("isEnabled: " + requestUrl);
+//            return isMatch(requestUrl);
             return true;
         }
 
@@ -130,31 +132,20 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
                 String decryptResp = "";
                 if (isRequest) {
                     // 处理请求
-                    List<IParameter> parameters = helpers.analyzeRequest(content).getParameters();
-                    for (IParameter parameter : parameters) {
-                        stdout.println(parameter.getValue() + ":" + parameter.getName());
-                    }
-                    // retrieve the data parameter
-                    IParameter parameter = helpers.getRequestParameter(content, decryptReqKey);
-                    stdout.println(parameter.getName() + "---" + parameter.getValue());
-                    // deserialize the parameter value
+                    String contentReqStr = new String(content, StandardCharsets.UTF_8);
+                    stdout.println("request contentStr: " + contentReqStr);
                     try {
-                        decryptResp = OKHttpUtils.post(decryptReqUrl, decryptReqKey, parameter.getValue());
+                        decryptResp = OKHttpUtils.post(decryptReqUrl, Constants.RequestKey, contentReqStr);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                 } else {
                     // 处理响应
-                    burpHelper.ParseResponse(content);
-                    stdout.println("response:");
-                    String respBodyStr = new String(burpHelper.responseBody, StandardCharsets.UTF_8);
-                    stdout.println(respBodyStr);
-                    // 这种情况只能解析JSON
-                    // TODO json/text/
-                    JSONObject jsonObject = JSONObject.parseObject(respBodyStr);
-                    String value = jsonObject.getString(decryptRespKey);
+                    String contentRespStr = new String(content, StandardCharsets.UTF_8);
+                    stdout.println("response contentStr:" + contentRespStr);
                     try {
-                        decryptResp = OKHttpUtils.post(decryptRespUrl, decryptRespKey, value);
+                        decryptResp = OKHttpUtils.post(decryptRespUrl, Constants.ResponseKey, contentRespStr);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
