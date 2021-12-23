@@ -70,7 +70,6 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
         return patternUrl.matcher(url).find();
     }
 
-
     @Override
     public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
         if (messageIsRequest) {
@@ -118,8 +117,6 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
         public boolean isEnabled(byte[] content, boolean isRequest) {
             // enable this tab for requests containing a data parameter
 //            String requestUrl = helpers.analyzeRequest(content).getUrl().toString();
-//            stdout.println("isEnabled: " + requestUrl);
-//            return isMatch(requestUrl);
             return true;
         }
 
