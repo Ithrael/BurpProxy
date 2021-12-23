@@ -41,18 +41,14 @@ public class BackGround extends JPanel {
         RuleDialog ruleDialog = RuleDialog.getInstance();
         ruleDialog.getMatchUrlTextField().setText("");
         ruleDialog.getDecryptRequestUrlTextField().setText("");
-        ruleDialog.getRequestKeyTextField().setText("");
         ruleDialog.getDecryptResponseUrlTextField().setText("");
-        ruleDialog.getResponseKeyTextField().setText("");
     }
 
     private void RuleOkMouseClicked(MouseEvent e) {
         RuleDialog ruleDialog = RuleDialog.getInstance();
         String matchUrl = ruleDialog.getMatchUrlTextField().getText();
         String decryptRequestUrl = ruleDialog.getDecryptRequestUrlTextField().getText();
-        String requestKey = ruleDialog.getRequestKeyTextField().getText();
         String decryptResponseUrl = ruleDialog.getDecryptResponseUrlTextField().getText();
-        String responseKey = ruleDialog.getResponseKeyTextField().getText();
     }
 
     private void RuleTableChange(TableModelEvent e,JTabbedPane pane) {

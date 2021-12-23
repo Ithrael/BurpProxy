@@ -29,20 +29,15 @@ public class RuleDialog extends JFrame {
         dialogPane = new JPanel();
         panel1 = new JPanel();
         panel2 = new JPanel();
-        matchUrlLabel = new JLabel();
+        label1 = new JLabel();
         matchUrlTextField = new JTextField();
         panel3 = new JPanel();
-        decryptRequestUrlLabel = new JLabel();
+        label2 = new JLabel();
         decryptRequestUrlTextField = new JTextField();
-        panel4 = new JPanel();
-        requestKeyLabel = new JLabel();
-        requestKeyTextField = new JTextField();
         panel5 = new JPanel();
-        decryptResponseUrlLabel = new JLabel();
+        label4 = new JLabel();
         decryptResponseUrlTextField = new JTextField();
         panel6 = new JPanel();
-        responseKeyLabel = new JLabel();
-        responseKeyTextField = new JTextField();
         buttonBar = new JPanel();
         okButton = new JButton();
         clearButton = new JButton();
@@ -65,9 +60,9 @@ public class RuleDialog extends JFrame {
                 {
                     panel2.setLayout(new GridLayout(1, 2));
 
-                    //---- matchUrlLabel ----
-                    matchUrlLabel.setText("Match Url");
-                    panel2.add(matchUrlLabel);
+                    //---- label1 ----
+                    label1.setText("Match Url");
+                    panel2.add(label1);
                     panel2.add(matchUrlTextField);
                 }
                 panel1.add(panel2);
@@ -76,31 +71,20 @@ public class RuleDialog extends JFrame {
                 {
                     panel3.setLayout(new GridLayout(1, 2));
 
-                    //---- decryptRequestUrlLabel ----
-                    decryptRequestUrlLabel.setText("Decrpt Request Url");
-                    panel3.add(decryptRequestUrlLabel);
+                    //---- label2 ----
+                    label2.setText("Decrpt Request Url");
+                    panel3.add(label2);
                     panel3.add(decryptRequestUrlTextField);
                 }
                 panel1.add(panel3);
-
-                //======== panel4 ========
-                {
-                    panel4.setLayout(new GridLayout(1, 2));
-
-                    //---- requestKeyLabel ----
-                    requestKeyLabel.setText("Request Key");
-                    panel4.add(requestKeyLabel);
-                    panel4.add(requestKeyTextField);
-                }
-                panel1.add(panel4);
 
                 //======== panel5 ========
                 {
                     panel5.setLayout(new GridLayout(1, 2));
 
-                    //---- decryptResponseUrlLabel ----
-                    decryptResponseUrlLabel.setText("Decrpt Response Url");
-                    panel5.add(decryptResponseUrlLabel);
+                    //---- label4 ----
+                    label4.setText("Decrpt Response Url");
+                    panel5.add(label4);
                     panel5.add(decryptResponseUrlTextField);
                 }
                 panel1.add(panel5);
@@ -108,11 +92,6 @@ public class RuleDialog extends JFrame {
                 //======== panel6 ========
                 {
                     panel6.setLayout(new GridLayout(1, 2));
-
-                    //---- responseKeyLabel ----
-                    responseKeyLabel.setText("Response Key");
-                    panel6.add(responseKeyLabel);
-                    panel6.add(responseKeyTextField);
                 }
                 panel1.add(panel6);
             }
@@ -122,20 +101,20 @@ public class RuleDialog extends JFrame {
             {
                 buttonBar.setBorder(new EmptyBorder(12, 0, 0, 0));
                 buttonBar.setLayout(new GridBagLayout());
-                ((GridBagLayout) buttonBar.getLayout()).columnWidths = new int[]{0, 85, 80};
-                ((GridBagLayout) buttonBar.getLayout()).columnWeights = new double[]{1.0, 0.0, 0.0};
+                ((GridBagLayout)buttonBar.getLayout()).columnWidths = new int[] {0, 85, 80};
+                ((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0, 0.0};
 
                 //---- okButton ----
                 okButton.setText("OK");
                 buttonBar.add(okButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                        new Insets(0, 0, 0, 5), 0, 0));
+                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                    new Insets(0, 0, 0, 5), 0, 0));
 
-                //---- clearButton ----
+                //---- cancelButton ----
                 clearButton.setText("Clear");
                 buttonBar.add(clearButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                        new Insets(0, 0, 0, 0), 0, 0));
+                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                    new Insets(0, 0, 0, 0), 0, 0));
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
@@ -149,20 +128,15 @@ public class RuleDialog extends JFrame {
     private JPanel dialogPane;
     private JPanel panel1;
     private JPanel panel2;
-    private JLabel matchUrlLabel;
+    private JLabel label1;
     private JTextField matchUrlTextField;
     private JPanel panel3;
-    private JLabel decryptRequestUrlLabel;
+    private JLabel label2;
     private JTextField decryptRequestUrlTextField;
-    private JPanel panel4;
-    private JLabel requestKeyLabel;
-    private JTextField requestKeyTextField;
     private JPanel panel5;
-    private JLabel decryptResponseUrlLabel;
+    private JLabel label4;
     private JTextField decryptResponseUrlTextField;
     private JPanel panel6;
-    private JLabel responseKeyLabel;
-    private JTextField responseKeyTextField;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton clearButton;
@@ -177,16 +151,8 @@ public class RuleDialog extends JFrame {
         return decryptRequestUrlTextField;
     }
 
-    public JTextField getRequestKeyTextField() {
-        return requestKeyTextField;
-    }
-
     public JTextField getDecryptResponseUrlTextField() {
         return decryptResponseUrlTextField;
-    }
-
-    public JTextField getResponseKeyTextField() {
-        return responseKeyTextField;
     }
 
     public JButton getOkButton() {

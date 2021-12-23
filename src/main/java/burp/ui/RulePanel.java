@@ -24,11 +24,11 @@ public class RulePanel extends JPanel {
         setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup()
-                .addGap(0, 400, Short.MAX_VALUE)
+                .addGap(0, 475, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup()
-                .addGap(0, 300, Short.MAX_VALUE)
+                .addGap(0, 345, Short.MAX_VALUE)
         );
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }

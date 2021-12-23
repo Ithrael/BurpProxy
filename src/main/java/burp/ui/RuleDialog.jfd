@@ -41,18 +41,6 @@ new FormModel {
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
 						"columns": 2
 					} ) {
-						name: "panel4"
-						add( new FormComponent( "javax.swing.JLabel" ) {
-							name: "label3"
-							"text": "Request Key"
-						} )
-						add( new FormComponent( "javax.swing.JTextField" ) {
-							name: "textField3"
-						} )
-					} )
-					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
-						"columns": 2
-					} ) {
 						name: "panel5"
 						add( new FormComponent( "javax.swing.JLabel" ) {
 							name: "label4"
@@ -66,13 +54,6 @@ new FormModel {
 						"columns": 2
 					} ) {
 						name: "panel6"
-						add( new FormComponent( "javax.swing.JLabel" ) {
-							name: "label5"
-							"text": "Response Key"
-						} )
-						add( new FormComponent( "javax.swing.JTextField" ) {
-							name: "textField5"
-						} )
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"
