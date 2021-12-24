@@ -33,16 +33,13 @@ public class BackGround extends JPanel {
 
 
     private void RuleAddMouseClicked(MouseEvent e) {
-        RuleDialog ruleDialog = RuleDialog.getInstance();
-        ruleDialog.setSize(RuleWidth, RuleHeight);
-        ruleDialog.setVisible(true);
+        RulePanel rulePanel = RulePanel.getInstance();
+        int ok = JOptionPane.showConfirmDialog(null,rulePanel,"RuleSetting - Add Rule",JOptionPane.OK_OPTION);
     }
 
     private void RuleClearMouseClicked(MouseEvent e) {
-        RuleDialog ruleDialog = RuleDialog.getInstance();
-        ruleDialog.getMatchUrlTextField().setText("");
-        ruleDialog.getDecryptRequestUrlTextField().setText("");
-        ruleDialog.getDecryptResponseUrlTextField().setText("");
+        RulePanel rulePanel = RulePanel.getInstance();
+        int ok = JOptionPane.showConfirmDialog(null,rulePanel,"RuleSetting - Edit Rule",JOptionPane.OK_OPTION);
     }
 
     private void RuleOkMouseClicked(MouseEvent e) {
