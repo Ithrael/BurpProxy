@@ -8,6 +8,7 @@ import burp.entity.Rule;
 
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,11 +62,11 @@ public class BackGround extends JPanel {
 
     private void initComponents(Object[][] data,JTabbedPane pane) {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        button1 = new JButton();
+        addBtn = new JButton();
         scrollPane2 = new JScrollPane();
         table = new JTable();
-        button2 = new JButton();
-        button3 = new JButton();
+        editBtn = new JButton();
+        delBtn = new JButton();
 
         //======== this ========
         setLayout(new GridBagLayout());
@@ -75,10 +76,19 @@ public class BackGround extends JPanel {
         ((GridBagLayout)getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0E-4};
 
         //---- button1 ----
-        button1.setText("Add");
-        add(button1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+        addBtn.setText("Add");
+        add(addBtn, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 3, 3), 0, 0));
+        addBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                isEdit = true;
+                RuleAddMouseClicked(e);
+                model = (DefaultTableModel) table.getModel();
+                isEdit = false;
+            }
+        });
 
         //======== scrollPane2 ========
         {
@@ -89,25 +99,25 @@ public class BackGround extends JPanel {
             new Insets(0, 0, 0, 0), 0, 0));
 
         //---- button2 ----
-        button2.setText("Edit");
-        add(button2, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+        editBtn.setText("Edit");
+        add(editBtn, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 3, 3), 0, 0));
 
         //---- button3 ----
-        button3.setText("Delete");
-        add(button3, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+        delBtn.setText("Delete");
+        add(delBtn, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 3, 3), 0, 0));
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    private JButton button1;
+    private JButton addBtn;
     private JScrollPane scrollPane2;
     private JTable table;
-    private JButton button2;
-    private JButton button3;
+    private JButton editBtn;
+    private JButton delBtn;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     private final String[] title = new String[]{"Loaded", "MatchUrl", "DecryptRequestUrl", "RequestKey", "DecryptResponseUrl", "ResponseKey"};
