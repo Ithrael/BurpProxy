@@ -25,6 +25,8 @@ new FormModel {
 				"gridx": 1
 				"gridwidth": 4
 				"gridheight": 4
+				"hAlign": 5
+				"vAlign": 5
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "button2"
@@ -40,7 +42,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 455, 325 )
+			"size": new java.awt.Dimension( 1080, 800 )
 		} )
 	}
 }

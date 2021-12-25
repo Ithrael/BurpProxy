@@ -4,10 +4,38 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {space :0:475:x}"
-			"$verticalGroup": "par l {space :0:345:x}"
+			"$horizontalGroup": "par l {seq l {space :p:18:p, par l {seq {par l {comp label1::l:p::p, comp label2::l:p::p}, space :p:22:p, par l {comp textField2:::p:199:p, comp textField1:::p:199:p}}, seq l {par l {comp label3::l:p::p, comp label4::l:p::p}, space u:::p, par l:::p {comp textField3::::199:x, comp comboBox1::::199:x}}}, space ::171:x}}"
+			"$verticalGroup": "par l {seq l {space :p:94:p, par b {comp label1::b:p::p, comp textField1::b:p::p}, space s:::p, par l {comp label2:::p::p, comp textField2:::p::p}, space :p:14:p, par l {comp label3:::p::p, comp textField3:::p::p}, par l {seq {space :p:17:p, comp label4:::p::p}, seq l {space s:::p, comp comboBox1:::p::p}}, space ::81:x}}"
 		} ) {
 			name: "this"
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "matchUrl"
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField1"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label2"
+				"text": "requestUrl"
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField2"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label3"
+				"text": "responseUrl"
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textField3"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label4"
+				"text": "color"
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "comboBox1"
+			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
 			"size": new java.awt.Dimension( 475, 345 )
