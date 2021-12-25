@@ -1,4 +1,4 @@
-package burp;
+package burp.entity;
 
 public enum Color {
     RED("red"), GREEN("green"), BLANK("blank"), YELLOW("yellow");

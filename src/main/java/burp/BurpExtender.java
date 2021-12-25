@@ -1,9 +1,10 @@
 package burp;
 
+import burp.entity.Color;
 import burp.ui.BackGround;
 import burp.ui.RuleDialog;
 import burp.utils.OKHttpUtils;
-import com.alibaba.fastjson.JSONObject;
+import burp.utils.StdoutUtils;
 
 import javax.swing.*;
 import java.awt.Component;
@@ -14,7 +15,6 @@ import java.util.regex.Pattern;
 
 public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEditorTabFactory, ITab {
     private final BackGround back = new BackGround(null, null);
-    private final RuleDialog rule = new RuleDialog();
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
     private BurpHelper burpHelper;
@@ -35,8 +35,8 @@ public class BurpExtender implements IBurpExtender, IHttpListener, IMessageEdito
         helpers = callbacks.getHelpers();
         burpHelper = new BurpHelper(helpers);
 
-        stdout = new PrintWriter(callbacks.getStdout(), true);
-
+        StdoutUtils.stdout = new PrintWriter(callbacks.getStdout(), true);
+        stdout = StdoutUtils.stdout;
         stdout.println("@Core Author: Ithrael");
         stdout.println("@UI Author: Ithrael");
         stdout.println("@Github: https://github.com/Ithrael/BurpProxy");

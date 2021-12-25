@@ -1,18 +1,30 @@
 package burp.entity;
 
+import burp.ui.RuleDialog;
+
 public class Rule {
     private String matchUrl;
     private String decryptRequestUrl;
-    private String requestKey;
     private String decryptResponseUrl;
-    private String responseKey;
+    private Color color;
 
-    public Rule(String matchUrl, String decryptRequestUrl, String requestKey, String decryptResponseUrl, String responseKey) {
+    private static class RuleInstance {
+        private static final Rule instance = new Rule();
+    }
+
+    public static Rule getInstance(){
+        return Rule.RuleInstance.instance;
+    }
+
+    public Rule(){
+
+    }
+
+    public Rule(String matchUrl, String decryptRequestUrl, String decryptResponseUrl, Color color) {
         this.matchUrl = matchUrl;
         this.decryptRequestUrl = decryptRequestUrl;
-        this.requestKey = requestKey;
         this.decryptResponseUrl = decryptResponseUrl;
-        this.responseKey = responseKey;
+        this.color = color;
     }
 
     public String getMatchUrl() {
@@ -31,13 +43,6 @@ public class Rule {
         this.decryptRequestUrl = decryptRequestUrl;
     }
 
-    public String getRequestKey() {
-        return requestKey;
-    }
-
-    public void setRequestKey(String requestKey) {
-        this.requestKey = requestKey;
-    }
 
     public String getDecryptResponseUrl() {
         return decryptResponseUrl;
@@ -47,11 +52,11 @@ public class Rule {
         this.decryptResponseUrl = decryptResponseUrl;
     }
 
-    public String getResponseKey() {
-        return responseKey;
+    public Color getColor() {
+        return color;
     }
 
-    public void setResponseKey(String responseKey) {
-        this.responseKey = responseKey;
+    public void setColor(Color color) {
+        this.color = color;
     }
 }
